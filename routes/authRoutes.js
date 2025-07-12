@@ -3,6 +3,6 @@ const { register } = require("../controllers/authController");
 
 const routes = express.Router();
 
-routes.get("/", register);
+routes.post("/register", register);
 
 module.exports = routes;

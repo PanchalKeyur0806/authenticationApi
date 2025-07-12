@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 
 const authRoutes = require("./routes/authRoutes");
+const { errController } = require("./controllers/errController");
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(cookieParser());
 
 // routing
 app.use("/auth", authRoutes);
+app.use(errController);
 
 app.listen(process.env.PORT, () => {
   console.log("server is running on port ", process.env.PORT);
