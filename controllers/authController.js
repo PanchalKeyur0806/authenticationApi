@@ -62,3 +62,12 @@ exports.login = catchAsync(async (req, res, next) => {
     message: "login successfull",
   });
 });
+
+exports.logout = catchAsync(async (req, res, next) => {
+  res.clearCookie("token");
+
+  res.status(200).json({
+    status: "success",
+    message: "logout successfull",
+  });
+});
