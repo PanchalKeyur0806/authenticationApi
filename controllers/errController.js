@@ -1,8 +1,9 @@
 exports.errController = (err, req, res, next) => {
-  const { message, statusCode } = err;
-  res.status(statusCode).json({
+  console.log(err);
+
+  const { message } = err;
+  res.status(400).json({
     status: "Error",
-    statusCode: statusCode,
     message: message,
   });
 };
