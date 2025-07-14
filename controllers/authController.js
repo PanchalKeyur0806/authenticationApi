@@ -1,7 +1,12 @@
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
+
+// utils moduels (from the project)
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
+const { sendEmail } = require("../utils/nodeMailer");
+const { send } = require("process");
 
 const signToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
@@ -68,6 +73,53 @@ exports.logout = catchAsync(async (req, res, next) => {
     message: "logout successfull",
   });
 });
+
+// forget the password
+exports.forgetPassword = catchAsync(async (req, res, next) => {
+  const { email } = req.body;
+  if (!email) {
+    return next(new AppError("Please Enter your email field", 404));
+  }
+
+  // check that user is exists or not
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new AppError("User not found", 404));
+  }
+
+  const resetToken = crypto.randomBytes(12).toString("hex");
+  user.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  user.passwordTokenExpires = Date.now() + 30 * 1000;
+
+  await user.save({ saveBeforeValidate: false });
+
+  // generate the rest url
+  const url = `${req.protocol}://${req.get(
+    "host"
+  )}/auth/resetpassword/${resetToken}`;
+  const message = `click this link to change the password ${url}`;
+
+  // sending email to client
+  try {
+    sendEmail({
+      subject: "change your password",
+      message: message,
+    });
+  } catch (error) {
+    console.error("Error :- ", error);
+  }
+
+  // send respose to the client
+  res.status(200).json({
+    status: "success",
+    message: "email send successfully",
+  });
+});
+
+// reset the password
 
 // get the profile of the user
 exports.getProfile = catchAsync(async (req, res, next) => {

@@ -9,6 +9,8 @@ const userSchema = mongoose.Schema({
   },
   password: String,
   googleId: String,
+  passwordResetToken: String,
+  passwordTokenExpires: String,
 });
 
 // save password before saving to the database

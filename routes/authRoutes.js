@@ -6,6 +6,7 @@ const {
   logout,
   getProfile,
   googleCallback,
+  forgetPassword,
 } = require("../controllers/authController");
 
 const { protectRoutes } = require("../middlewares/authMiddleware");
@@ -16,6 +17,8 @@ const routes = express.Router();
 routes.post("/register", register);
 routes.post("/login", login);
 routes.post("/logout", logout);
+
+routes.post("/forgotpassword", forgetPassword);
 
 routes.get("/profile", protectRoutes, getProfile);
 
