@@ -9,6 +9,7 @@ const signToken = (userId) => {
   });
 };
 
+// register the user
 exports.register = catchAsync(async (req, res, next) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
@@ -22,8 +23,6 @@ exports.register = catchAsync(async (req, res, next) => {
 
   const token = signToken(saveUser._id);
 
-  res.cookie("token", token);
-
   res.json({
     status: "success",
     token: token,
@@ -31,6 +30,7 @@ exports.register = catchAsync(async (req, res, next) => {
   });
 });
 
+// login the user
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -54,8 +54,6 @@ exports.login = catchAsync(async (req, res, next) => {
 
   const token = signToken(checkUser._id);
 
-  res.cookie("token", token);
-
   res.status(200).json({
     status: "success",
     token,
@@ -63,11 +61,34 @@ exports.login = catchAsync(async (req, res, next) => {
   });
 });
 
+// logout the user
 exports.logout = catchAsync(async (req, res, next) => {
-  res.clearCookie("token");
-
   res.status(200).json({
     status: "success",
     message: "logout successfull",
+  });
+});
+
+// get the profile of the user
+exports.getProfile = catchAsync(async (req, res, next) => {
+  const user = req.user.id;
+  const findUser = await User.findById(user);
+  if (!findUser) {
+    return next(new AppError("User not found", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: findUser,
+  });
+});
+
+// genrate the token when user is logged in via google
+exports.googleCallback = catchAsync(async (req, res, next) => {
+  const token = signToken(req.user.id);
+  res.status(200).json({
+    message: "Google Login successful",
+    token,
+    user: req.user,
   });
 });

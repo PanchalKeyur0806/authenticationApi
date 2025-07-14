@@ -3,11 +3,26 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+const session = require("express-session");
 
 const authRoutes = require("./routes/authRoutes");
 const { errController } = require("./controllers/errController");
+const passport = require("passport");
+require("./config/passport");
 
 const app = express();
+
+app.use(
+  session({
+    secret: process.env.SESSSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+// passport middlewares
+app.use(passport.initialize());
+app.use(passport.session());
 
 // connecting to database
 mongoose
