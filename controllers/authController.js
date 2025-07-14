@@ -120,6 +120,41 @@ exports.forgetPassword = catchAsync(async (req, res, next) => {
 });
 
 // reset the password
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  const { password } = req.body;
+  if (!password) {
+    return next(new AppError("password not found", 404));
+  }
+
+  // create hashed token based on params
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+
+  // find the user in DB
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordTokenExpires: { $gt: Date.now() },
+  });
+  if (!user) {
+    return next(new AppError("User not found", 404));
+  }
+
+  // Update the profile
+  user.password = password;
+  user.passwordResetToken = undefined;
+  user.passwordExpires = undefined;
+
+  // save the profile
+  await user.save();
+
+  // send respose to client
+  res.status(200).json({
+    status: "success",
+    message: "password reset successfully",
+  });
+});
 
 // get the profile of the user
 exports.getProfile = catchAsync(async (req, res, next) => {

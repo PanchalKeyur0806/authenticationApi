@@ -7,6 +7,7 @@ const {
   getProfile,
   googleCallback,
   forgetPassword,
+  resetPassword,
 } = require("../controllers/authController");
 
 const { protectRoutes } = require("../middlewares/authMiddleware");
@@ -19,6 +20,7 @@ routes.post("/login", login);
 routes.post("/logout", logout);
 
 routes.post("/forgotpassword", forgetPassword);
+routes.post("/resetpassword/:token", resetPassword);
 
 routes.get("/profile", protectRoutes, getProfile);
 
