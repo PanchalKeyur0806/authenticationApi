@@ -1,9 +1,15 @@
-const nodemailer = require("nodemailer");
+// const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
 
-exports.sendEmail = (options) => {
+type EmailOptions = {
+  email?: string;
+  subject: string;
+  message: string;
+};
+
+export const sendEmail = (options: EmailOptions) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
-    host: 465,
     auth: {
       user: process.env.USER_EMAIL,
       pass: process.env.GOOGLE_PASSWORD,

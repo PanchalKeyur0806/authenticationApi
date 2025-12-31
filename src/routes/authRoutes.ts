@@ -1,6 +1,20 @@
-const express = require("express");
-const passport = require("passport");
-const {
+// const express = require("express");
+// const passport = require("passport");
+// const {
+//   register,
+//   login,
+//   logout,
+//   getProfile,
+//   googleCallback,
+//   forgetPassword,
+//   resetPassword,
+// } = require("../controllers/authController");
+
+// const { protectRoutes } = require("../middlewares/authMiddleware");
+
+import { Router } from "express";
+import passport from "passport";
+import {
   register,
   login,
   logout,
@@ -8,11 +22,10 @@ const {
   googleCallback,
   forgetPassword,
   resetPassword,
-} = require("../controllers/authController");
+} from "../controllers/authController";
+import { protectRoutes } from "../middlewares/authMiddleware";
 
-const { protectRoutes } = require("../middlewares/authMiddleware");
-
-const routes = express.Router();
+const routes: Router = Router();
 
 // routes for jwt login
 routes.post("/register", register);
@@ -35,4 +48,6 @@ routes.get(
   googleCallback
 );
 
-module.exports = routes;
+// module.exports = routes;
+
+export default routes;
